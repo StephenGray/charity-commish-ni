@@ -90,7 +90,7 @@ def scrape_write_data(charity_num, page, pairings):
 
 # query each charity html page
 def query_charities(charity_nums, pairings):
-    for ccnino in charity_nums[1:10]:
+    for ccnino in charity_nums[1:]:
         query = {'regid':ccnino,'subid':'0'}
         try:
             page = requests.get(url, params=query)
