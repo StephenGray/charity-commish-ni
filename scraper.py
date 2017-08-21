@@ -24,12 +24,12 @@
 # called "data".
 
 from lxml import html
-import urllib.request, requests, csv, os, sqlite3
+import urllib2, requests, csv, os, sqlite3
 from datetime import date
 
 def download_reg():
     if not os.path.exists(charity_reg_file):
-        urllib.request.urlretrieve('http://www.charitycommissionni.org.uk/charity-search/?&exportCSV=1', charity_register) ## download today's Charity Register
+        urllib2.urlopen('http://www.charitycommissionni.org.uk/charity-search/?&exportCSV=1', charity_register) ## download today's Charity Register
 
 def get_charity_nums(charity_reg_file, charity_nums):
     f = open(charity_reg_file, 'rU' ) #open the charity register in read universal mode
