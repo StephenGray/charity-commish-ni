@@ -13,7 +13,7 @@ from datetime import date
 
 def download_reg():
     if not os.path.exists(charity_reg_file):
-        urllib2.urlopen('http://www.charitycommissionni.org.uk/charity-search/?q=&include=Removed&exportCSV=1', charity_register) ## download today's Charity Register
+        urllib2.urlopen('http://www.charitycommissionni.org.uk/charity-search/?q=&include=Removed&exportCSV=1', charity_reg_file) ## download today's Charity Register
 
 def set_up_table(table_name):
     c.execute('CREATE TABLE IF NOT EXISTS ' + table_name + '(id INTEGER PRIMARY KEY)')
