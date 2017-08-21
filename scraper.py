@@ -8,12 +8,12 @@
 # called "data".
 
 from lxml import html
-import urllib2, requests, csv, os, sqlite3
+import urllib.request, requests, csv, os, sqlite3
 from datetime import date
 
 def download_reg():
     if not os.path.exists(charity_reg_file):
-        urllib2.urlopen('http://www.charitycommissionni.org.uk/charity-search/?q=&include=Removed&exportCSV=1', charity_reg_file) ## download today's Charity Register
+        return(urllib.request.urlopen('http://www.charitycommissionni.org.uk/charity-search/?q=&include=Removed&exportCSV=1')) ## download today's Charity Register
 
 def set_up_table(table_name):
     c.execute('CREATE TABLE IF NOT EXISTS ' + table_name + '(id INTEGER PRIMARY KEY)')
@@ -25,11 +25,10 @@ def set_up_table(table_name):
         pass
 
 def get_charity_nums(charity_reg_file, charity_nums):
-    f = open(charity_reg_file, 'rU' )
-    for line in f:
-        cells = line.split( "," )
-        charity_nums.append((cells[0]))
-    f.close()
+    with urllib.request.urlopen('http://www.charitycommissionni.org.uk/charity-search/?q=&include=Removed&exportCSV=1') as response:
+        f = csv.reader(response.read().decode('utf-8').splitlines())
+        for line in f:
+            charity_nums.append(line[0])
 
     ## write each charity no. to the SqliteDB as PRIMARY KEYs
     for nic in charity_nums[1:]:
@@ -73,7 +72,7 @@ def scrape_write_data(charity_num, page, pairings):
             item = '|'.join(newfieldvalue).strip().lstrip('|').rstrip('|')
 
             c.execute("UPDATE {tn} SET {cn}=(:what) WHERE id=:nic".format(tn=table_name, cn=field[0]), {'what': item, 'nic': int(charity_num)})
-            c.execute("UPDATE {tn} SET data_acquite_date=(:today) WHERE id=:nic".format(tn=table_name), {'today': date.today().strftime('%Y-%m-%d'), 'nic': int(charity_num)})
+            c.execute("UPDATE {tn} SET data_acquire_date=(:today) WHERE id=:nic".format(tn=table_name), {'today': date.today().strftime('%Y-%m-%d'), 'nic': int(charity_num)})
             conn.commit()
         print('updated entry for', charity_num)
     else:
@@ -110,7 +109,6 @@ if __name__ == '__main__':
     c = conn.cursor()
 
     set_up_table(table_name)
-    download_reg()
     get_charity_nums(charity_reg_file, charity_nums)
     get_fieldnames()
     query_charities(charity_nums, pairings)
