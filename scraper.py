@@ -15,6 +15,15 @@ def download_reg():
     if not os.path.exists(charity_reg_file):
         urllib2.urlopen('http://www.charitycommissionni.org.uk/charity-search/?q=&include=Removed&exportCSV=1', charity_register) ## download today's Charity Register
 
+def set_up_table(table_name):
+    c.execute('CREATE TABLE IF NOT EXISTS ' + table_name + '(id INTEGER PRIMARY KEY)')
+    conn.commit()
+    try:
+        c.execute("ALTER TABLE {tn} ADD COLUMN 'data_acquire_date'".format(tn=table_name))
+        conn.commit()
+    except:
+        pass
+
 def get_charity_nums(charity_reg_file, charity_nums):
     f = open(charity_reg_file, 'rU' )
     for line in f:
@@ -63,7 +72,8 @@ def scrape_write_data(charity_num, page, pairings):
                 newfieldvalue.append(listitem.strip().replace('\n','').replace('\r',''))
             item = '|'.join(newfieldvalue).strip().lstrip('|').rstrip('|')
 
-            c.execute("UPDATE {tn} SET {cn}=(:what) WHERE id=:nic".format(tn=table_name, cn=field[0]), {'what': item, "nic": int(charity_num)})
+            c.execute("UPDATE {tn} SET {cn}=(:what) WHERE id=:nic".format(tn=table_name, cn=field[0]), {'what': item, 'nic': int(charity_num)})
+            c.execute("UPDATE {tn} SET data_acquite_date=(:today) WHERE id=:nic".format(tn=table_name), {'today': date.today().strftime('%Y-%m-%d'), 'nic': int(charity_num)})
             conn.commit()
         print('updated entry for', charity_num)
     else:
@@ -98,9 +108,8 @@ if __name__ == '__main__':
 
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    c.execute('CREATE TABLE IF NOT EXISTS ' + table_name + '(id INTEGER PRIMARY KEY)')
-    conn.commit()
 
+    set_up_table(table_name)
     download_reg()
     get_charity_nums(charity_reg_file, charity_nums)
     get_fieldnames()
