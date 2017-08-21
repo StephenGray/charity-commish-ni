@@ -8,12 +8,12 @@
 # called "data".
 
 from lxml import html
-import urllib.request, requests, csv, os, sqlite3
+import urllib2, requests, csv, os, sqlite3
 from datetime import date
 
 def download_reg():
     if not os.path.exists(charity_reg_file):
-        return(urllib.request.urlopen('http://www.charitycommissionni.org.uk/charity-search/?q=&include=Removed&exportCSV=1')) ## download today's Charity Register
+        return(urllib2.urlopen('http://www.charitycommissionni.org.uk/charity-search/?q=&include=Removed&exportCSV=1')) ## download today's Charity Register
 
 def set_up_table(table_name):
     c.execute('CREATE TABLE IF NOT EXISTS ' + table_name + '(id INTEGER PRIMARY KEY)')
