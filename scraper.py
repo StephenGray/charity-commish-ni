@@ -21,10 +21,10 @@ def set_up_table(table_name):
         pass
 
 def get_charity_nums(charity_reg_file, charity_nums):
-    with urllib2.urlopen('http://www.charitycommissionni.org.uk/charity-search/?q=&include=Removed&exportCSV=1') as response:
-        f = csv.reader(response.read().decode('utf-8').splitlines())
-        for line in f:
-            charity_nums.append(line[0])
+    response = urllib2.urlopen('http://www.charitycommissionni.org.uk/charity-search/?q=&include=Removed&exportCSV=1')
+    f = csv.reader(response.read().decode('utf-8').splitlines())
+    for line in f:
+        charity_nums.append(line[0])
 
     ## write each charity no. to the SqliteDB as PRIMARY KEYs
     for nic in charity_nums[1:]:
