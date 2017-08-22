@@ -8,13 +8,9 @@
 # called "data".
 
 from lxml import html
-import urllib.request, requests, csv, os, sqlite3
+import urllib2, requests, csv, os, sqlite3
 from datetime import date
 
-# def download_reg():
-#     if not os.path.exists(charity_reg_file):
-#         return(urllib.request.urlopen('http://www.charitycommissionni.org.uk/charity-search/?q=&include=Removed&exportCSV=1')) ## download today's Charity Register
-#
 def set_up_table(table_name):
     c.execute('CREATE TABLE IF NOT EXISTS ' + table_name + '(id INTEGER PRIMARY KEY)')
     conn.commit()
@@ -24,9 +20,9 @@ def set_up_table(table_name):
     except:
         pass
 
-def get_charity_nums(charity_reg_file, charity_nums):
-    response = urllib.request.urlopen('http://www.charitycommissionni.org.uk/charity-search/?q=&include=Removed&exportCSV=1')
-    f = csv.reader(response.read().decode('utf-8').splitlines())
+def get_charity_nums(charity_nums):
+    response = urllib2.urlopen('http://www.charitycommissionni.org.uk/charity-search/?q=&include=Removed&exportCSV=1')
+    f = csv.reader(response.read().splitlines())
     for line in f:
         charity_nums.append(line[0])
 
@@ -74,7 +70,7 @@ def scrape_write_data(charity_num, page, pairings):
             c.execute("UPDATE {tn} SET {cn}=(:what) WHERE id=:nic".format(tn=table_name, cn=field[0]), {'what': item, 'nic': int(charity_num)})
             c.execute("UPDATE {tn} SET data_acquire_date=(:today) WHERE id=:nic".format(tn=table_name), {'today': date.today().strftime('%Y-%m-%d'), 'nic': int(charity_num)})
             conn.commit()
-        print('updated entry for', charity_num)
+        print('updated entry for ' + charity_num)
     else:
         page.raise_for_status()
 
@@ -86,19 +82,17 @@ def query_charities(charity_nums, pairings):
             page = requests.get(url, params=query)
             scrape_write_data(ccnino, page, pairings)
         except requests.exceptions.Timeout:
-            print('connection timed out:', ccnino)
+            print('connection timed out: ' +  ccnino)
             errors.append(ccnino)
             continue
         except requests.exceptions.RequestException as e:
-            print('Request Exception on',ccnino,':',e)
+            print('Request Exception on ' + ccnino + ': ' + e)
             errors.append(ccnino)
             continue
 
 if __name__ == '__main__':
     url = "http://www.charitycommissionni.org.uk/charity-details"
     download_day = date.today().strftime('%Y%m%d')
-    charity_reg_file = 'data/ccni' + download_day + '.csv'
-    scraped_data = 'data/ccni_scraped' + download_day + '.csv'
     sqlite_file = 'data.sqlite' ## morph.io requirement
     table_name = 'data' ## morph.io requirement
     charity_nums = []
@@ -109,7 +103,7 @@ if __name__ == '__main__':
     c = conn.cursor()
 
     set_up_table(table_name)
-    get_charity_nums(charity_reg_file, charity_nums)
+    get_charity_nums(charity_nums)
     get_fieldnames()
     query_charities(charity_nums, pairings)
 
