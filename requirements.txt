@@ -8,5 +8,5 @@
 # cssselect==0.9.1
 
 lxml==3.8.0
-urllib2
+#urllib2
 requests
