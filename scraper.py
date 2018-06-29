@@ -76,6 +76,8 @@ def scrape_write_data(charity_num, page, pairings):
 
 # query each charity html page
 def query_charities(charity_nums, pairings):
+    ## TODO insteading of using pairings from the global variable,
+    ## get if from the get_fieldnames() function
     for ccnino in charity_nums[1:]:
         query = {'regid':ccnino,'subid':'0'}
         try:
@@ -104,7 +106,7 @@ if __name__ == '__main__':
 
     set_up_table(table_name)
     get_charity_nums(charity_nums)
-    get_fieldnames()
+    get_fieldnames() ## TODO remove this once the query_charities function has been fixed
     query_charities(charity_nums, pairings)
 
     if len(errors) > 0:
