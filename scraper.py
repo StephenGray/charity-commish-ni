@@ -65,7 +65,7 @@ def scrape_write_data(charity_num, page, pairings):
             for listitem in fieldvalue:
                 listitem.replace(' +',' ') # doesn't seem to be doing as expected
                 newfieldvalue.append(listitem.strip().replace('\n','').replace('\r',''))
-            item = '|'.join(newfieldvalue).strip().lstrip('|').rstrip('|')
+            item = ';'.join(newfieldvalue).strip().lstrip(';').rstrip(';')
 
             c.execute("UPDATE {tn} SET {cn}=(:what) WHERE id=:nic".format(tn=table_name, cn=field[0]), {'what': item, 'nic': int(charity_num)})
             c.execute("UPDATE {tn} SET data_acquire_date=(:today) WHERE id=:nic".format(tn=table_name), {'today': date.today().strftime('%Y-%m-%d'), 'nic': int(charity_num)})
