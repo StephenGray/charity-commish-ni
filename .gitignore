@@ -1,4 +1,6 @@
 # Ignore output of scraper
 data.sqlite
+data.csv
 env/
 env2/
+run.bat

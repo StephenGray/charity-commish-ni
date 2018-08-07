@@ -17,11 +17,13 @@ def set_up_table(table_name):
     try:
         c.execute("ALTER TABLE {tn} ADD COLUMN 'data_acquire_date'".format(tn=table_name))
         conn.commit()
+        print("Table created")
     except:
         pass
 
 def get_charity_nums(charity_nums):
     response = urllib2.urlopen('http://www.charitycommissionni.org.uk/charity-search/?q=&include=Removed&exportCSV=1')
+    print("List downloaded")
     f = csv.reader(response.read().splitlines())
     for line in f:
         charity_nums.append(line[0])
@@ -92,6 +94,22 @@ def query_charities(charity_nums, pairings):
             errors.append(ccnino)
             continue
 
+def clean_fields():
+    '''
+    Some fields contain unwanted text coming from the XPath query
+    TODO might it be better to do this action during the initial scraping?
+    '''
+    cleaning = [
+        ("charity_number", "Charity no. ", ""),
+        ("company_number", "Company no. ", ""),
+        ("date_registered", "Date registered. ", "")
+        ]
+    
+    for i in cleaning:
+        c.execute('UPDATE {tn} SET {cn}=REPLACE({cn}, :tx, :replace)'.format(tn=table_name, cn=i[0]), {"tx": i[1], "replace": i[2]})
+        conn.commit()
+
+
 if __name__ == '__main__':
     url = "http://www.charitycommissionni.org.uk/charity-details"
     download_day = date.today().strftime('%Y%m%d')
@@ -108,12 +126,13 @@ if __name__ == '__main__':
     get_charity_nums(charity_nums)
     get_fieldnames() ## TODO remove this once the query_charities function has been fixed
     query_charities(charity_nums, pairings)
+    clean_fields()
 
     if len(errors) > 0:
         print('Data scraped from Charity Commission, except for these numbers:\n')
         for no in errors:
             print(no)
     else:
-        print('Data scraped from Charity Commission for',len(charity_nums),'entries')
+        print('Data scraped from Charity Commission for ' + str(len(charity_nums)) + ' entries')
 
     conn.close()
