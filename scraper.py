@@ -22,7 +22,7 @@ def set_up_table(table_name):
         pass
 
 def get_charity_nums(charity_nums):
-    response = urllib2.urlopen('http://www.charitycommissionni.org.uk/charity-search/?q=&include=Removed&exportCSV=1')
+    response = urllib2.urlopen('https://www.charitycommissionni.org.uk/umbraco/api/charityReportingApi/ExportSearchResultsToCsv/?pageNumber=1&include=Removed')
     print("List downloaded")
     f = csv.reader(response.read().splitlines())
     for line in f:
@@ -81,7 +81,7 @@ def query_charities(charity_nums, pairings):
     ## TODO insteading of using pairings from the global variable,
     ## get if from the get_fieldnames() function
     for ccnino in charity_nums[1:]:
-        query = {'regid':ccnino,'subid':'0'}
+        query = {'regId':ccnino,'subId':'0'}
         try:
             page = requests.get(url, params=query)
             scrape_write_data(ccnino, page, pairings)
@@ -90,7 +90,7 @@ def query_charities(charity_nums, pairings):
             errors.append(ccnino)
             continue
         except requests.exceptions.RequestException as e:
-            print('Request Exception on ' + ccnino + ': ' + e)
+            print('Request Exception on ' + ccnino + ': ' + str(e))
             errors.append(ccnino)
             continue
 
