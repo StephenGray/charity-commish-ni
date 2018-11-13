@@ -4,3 +4,4 @@ data.csv
 env/
 env2/
 run.bat
+.vscode/settings.json
