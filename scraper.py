@@ -58,6 +58,10 @@ def get_fieldnames():
     return(pairings)
 
 def scrape_write_data(charity_num, page, pairings):
+    ''' #TODO: Status and Company number fields may not be found correctly
+        as their list order can change depending what data is available. 
+        May need to use Regex to counter this.
+    '''
     tree = html.fromstring(page.content)
     # go through each field in the xPath set and scrape data
     if page.status_code == requests.codes.ok:
