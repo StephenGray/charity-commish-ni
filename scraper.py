@@ -84,7 +84,7 @@ def scrape_write_data(charity_num, page, pairings):
 def query_charities(charity_nums, pairings):
     ## TODO insteading of using pairings from the global variable,
     ## get if from the get_fieldnames() function
-    for ccnino in charity_nums[1:]:
+    for ccnino in charity_nums[1:3]:
         query = {'regId':ccnino,'subId':'0'}
         try:
             page = requests.get(url, params=query)
