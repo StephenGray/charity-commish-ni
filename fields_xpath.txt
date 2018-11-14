@@ -25,3 +25,4 @@ accounts_link,//*[@id="documents"]/div[1]/a[2]/@href
 examiners_report_link,//*[@id="documents"]/div[1]/a[1]/@href
 trustee_annual_report_link,//*[@id="documents"]/div[1]/a[3]/@href
 regions,//*[@id="operations"]/div/div/ul/*/text()
+trustees,//*[@id="people"]/div/div[2]/div[3]/div/table/tbody/*/*/text()
