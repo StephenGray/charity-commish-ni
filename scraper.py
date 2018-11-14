@@ -84,7 +84,7 @@ def scrape_write_data(charity_num, page, pairings):
 def query_charities(charity_nums, pairings):
     ## TODO insteading of using pairings from the global variable,
     ## get if from the get_fieldnames() function
-    for ccnino in charity_nums[1:3]:
+    for ccnino in charity_nums[1:]:
         query = {'regId':ccnino,'subId':'0'}
         try:
             page = requests.get(url, params=query)
@@ -132,11 +132,13 @@ if __name__ == '__main__':
     query_charities(charity_nums, pairings)
     clean_fields()
 
+    updated_today = c.execute("SELECT COUNT(*) FROM {tn} WHERE data_acquire_date=(:today)".format(tn='data'), {'today': date.today().strftime('%Y-%m-%d')})
+
     if len(errors) > 0:
         print('Data scraped from Charity Commission, except for these numbers:\n')
         for no in errors:
             print(no)
     else:
-        print('Data scraped from Charity Commission for ' + str(len(charity_nums)) + ' entries')
+        print('Data scraped from Charity Commission for ' + str(updated_today.fetchone()[0]) + ' entries')
 
     conn.close()
