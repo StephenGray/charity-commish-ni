@@ -22,7 +22,7 @@ def set_up_table(table_name):
         pass
 
 def get_charity_nums(charity_nums):
-    response = urllib2.urlopen('https://www.charitycommissionni.org.uk/umbraco/api/charityReportingApi/ExportSearchResultsToCsv/?pageNumber=1&include=Removed')
+    response = urllib2.urlopen('https://www.charitycommissionni.org.uk/umbraco/api/charityApi/ExportSearchResultsToCsv/?pageNumber=1&include=Linked&include=Removed')
     print("List downloaded")
     f = csv.reader(response.read().splitlines())
     for line in f:
