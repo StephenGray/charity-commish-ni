@@ -87,7 +87,7 @@ def query_charities(charity_nums, pairings):
     for ccnino in charity_nums[1:]:
         query = {'regId':ccnino,'subId':'0'}
         try:
-            page = requests.get(url, params=query, verify='ccnicert.crt')
+            page = requests.get(url, params=query)
             scrape_write_data(ccnino, page, pairings)
         except requests.exceptions.Timeout:
             print('connection timed out: ' +  ccnino)
