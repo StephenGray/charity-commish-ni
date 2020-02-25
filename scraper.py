@@ -87,7 +87,7 @@ def query_charities(charity_nums, pairings):
     for ccnino in charity_nums[1:]:
         query = {'regId':ccnino,'subId':'0'}
         try:
-            page = requests.get(url, params=query)
+            page = requests.get(url, params=query, verify='ccnicert.crt')
             scrape_write_data(ccnino, page, pairings)
         except requests.exceptions.Timeout:
             print('connection timed out: ' +  ccnino)
@@ -106,7 +106,9 @@ def clean_fields():
     cleaning = [
         ("charity_number", "Charity no. ", ""),
         ("company_number", "Company no. ", ""),
-        ("date_registered", "Date registered. ", "")
+        ("date_registered", "Date registered. ", ""),
+        ("days_overdue", "Documents ", ""),
+        ("days_overdue", " days overdue", "")
         ]
     
     for i in cleaning:
